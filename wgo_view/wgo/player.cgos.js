@@ -424,6 +424,24 @@
     line.setAttribute("stroke-width", 2);
     t.graph.appendChild(line);
 
+    for (var i = -30; i <= 30; i+=5) {
+      var r = (-i / 40 + 0.5) * 100;
+      var label = createLabel((i == 0 ? "" : (i > 0 ? "+" : "-")) + Math.abs(i), WIDTH+10, r, 10, "#999999");
+      label.setAttribute("alignment-baseline", "middle");
+      label.setAttribute("text-anchor", "end");
+      t.graph.appendChild(label);
+      if (i == 0)
+        continue;
+      var line = document.createElementNS(SVG, "line");
+      line.setAttribute("x1", 0);
+      line.setAttribute("y1", r);
+      line.setAttribute("x2", WIDTH);
+      line.setAttribute("y2", r);
+      line.setAttribute("stroke", "#cccccc");
+      line.setAttribute("stroke-width", 1);
+      t.graph.appendChild(line);
+    }
+
     var blackScore = document.createElementNS(SVG, "polyline");
     blackScore.setAttribute("points", "0,0 0,0");
     blackScore.setAttribute("stroke", "#ff6666");
@@ -466,47 +484,81 @@
     t.cursor = cursor;
     t.graph.appendChild(cursor);
 
-    function createLabel(name, x, y) {
+    function createLabel(str, x, y, fontSize, color, id) {
       var text = document.createElementNS(SVG, "text");
       text.setAttribute('x', x);
       text.setAttribute('y', y);
-      text.setAttribute('font-size', 10);
-      text.setAttribute('font-family', 'monospace');
-      text.textContent = name;
+      text.setAttribute('font-size', fontSize ? fontSize : 10);
+      // text.setAttribute('font-family', 'monospace');
+      text.setAttribute("font-family", "Calibri, Tahoma, Arial");
+      text.setAttribute("font-weight", "bold");
+      if (color) {
+        text.setAttribute("stroke", "none");
+        text.setAttribute("fill", color);
+      }
+      if (id) {
+        text.setAttribute("id", id);
+      }
+      text.textContent = str;
       return text;
     }
+
     // legends
+    var box = document.createElementNS(SVG, "rect");
+    box.setAttribute("x", -10);
+    box.setAttribute("y", -10);
+    box.setAttribute("width", 150);
+    box.setAttribute("height", 35);
+    box.setAttribute("fill-opacity", "0.5");
+    box.setAttribute("fill", "#ffffff");
+    t.graph.appendChild(box);
+
+    var box = document.createElementNS(SVG, "rect");
+    box.setAttribute("x", -10);
+    box.setAttribute("y", 75);
+    box.setAttribute("width", 150);
+    box.setAttribute("height", 110);
+    box.setAttribute("fill-opacity", "0.5");
+    box.setAttribute("fill", "#ffffff");
+    t.graph.appendChild(box);
+
+    t.blackName = createLabel("B:", 0, 7, 15, "#cc0000", "legend-player-b")
+    t.graph.appendChild(t.blackName);
+
+    t.graph.appendChild(createLabel("Score", 0, 20, 10, "#cc0000"));
     var blackScore = document.createElementNS(SVG, "polygon");
-    blackScore.setAttribute("points", "50,10 80,10, 80,5 50,5");
+    blackScore.setAttribute("points", "30,20 60,20, 60,15 30,15");
     blackScore.setAttribute("stroke", "#ff6666");
     blackScore.setAttribute("stroke-width", 1);
     blackScore.setAttribute("fill", "none");
     t.graph.appendChild(blackScore);
-    t.graph.appendChild(createLabel('B Score', 0, 10));
 
-    var whiteScore = document.createElementNS(SVG, "polygon");
-    whiteScore.setAttribute("points", "50,20 80,20 80,15 50,15");
-    whiteScore.setAttribute("stroke", "#66ff66");
-    whiteScore.setAttribute("stroke-width", 1);
-    whiteScore.setAttribute("fill", "none");
-    t.graph.appendChild(whiteScore);
-    t.graph.appendChild(createLabel('W Score', 0, 20));
-
+    t.graph.appendChild(createLabel("Winrate", 70, 20, 10, "#cc0000"));
     var blackWinrate = document.createElementNS(SVG, "polyline");
-    blackWinrate.setAttribute("points", "50,25 80,25");
+    blackWinrate.setAttribute("points", "110,18 130,18");
     blackWinrate.setAttribute("stroke", "#ff0000");
     blackWinrate.setAttribute("stroke-width", 3);
     blackWinrate.setAttribute("fill", "none");
     t.graph.appendChild(blackWinrate);
-    t.graph.appendChild(createLabel('B Winrate', 0, 30));
 
+    t.whiteName = createLabel("W:", 0, 100, 15, "#00cc00", "legend-player-w");
+    t.graph.appendChild(t.whiteName);
+
+    t.graph.appendChild(createLabel("Score", 0, 85, 10, "#00cc00"));
+    var whiteScore = document.createElementNS(SVG, "polygon");
+    whiteScore.setAttribute("points", "30,85 60,85 60,80 30,80");
+    whiteScore.setAttribute("stroke", "#66ff66");
+    whiteScore.setAttribute("stroke-width", 1);
+    whiteScore.setAttribute("fill", "none");
+    t.graph.appendChild(whiteScore);
+
+    t.graph.appendChild(createLabel('Winrate', 70, 85, 10, "#00cc00"));
     var whiteWinrate = document.createElementNS(SVG, "polyline");
-    whiteWinrate.setAttribute("points", "50,35 80,35");
+    whiteWinrate.setAttribute("points", "110,83 130,83");
     whiteWinrate.setAttribute("stroke", "#006600");
     whiteWinrate.setAttribute("stroke-width", 3);
     whiteWinrate.setAttribute("fill", "none");
     t.graph.appendChild(whiteWinrate);
-    t.graph.appendChild(createLabel('W Winrate', 0, 40));
   };
 
   function winrate(analysis) {
@@ -558,6 +610,8 @@
     }
 
     this.xScale = WIDTH / Math.max(100, e.kifu.nodeCount + 10)
+    this.winrate.blackName.textContent = "B:  " + e.kifu.info.black.name;
+    this.winrate.whiteName.textContent = "W:  " + e.kifu.info.white.name;
   };
 
   var update = function (e) {
