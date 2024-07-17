@@ -1047,6 +1047,9 @@ def _handle_player_genmove(sock: Client, data: str) -> None:
             try:
                 info = json.loads(tokens[1])
                 analysis = json.dumps(info, indent=None, separators=(",", ":"))
+                if not isinstance(info, dict):
+                    logger.info(f"Ignore bad analysis from {who}, '{tokens[1]}'")
+                    analysis = None
             except:
                 logger.info(f"Bad analysis from {who}, '{tokens[1]}'")
     over = ""
