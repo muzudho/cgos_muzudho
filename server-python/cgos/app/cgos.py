@@ -532,21 +532,25 @@ def saveSgf(gid: int, game: Game, sc: Optional[str], err: str) -> None:
                     f.write(comp)
         os.replace(f"{dest_dir}/{gid}.bin.tmp", f"{dest_dir}/{gid}.bin")
 
+    temp_files = [f"{dest_dir}/{gid}.bin"]
+
     if cfg.compressSgf:
         with gzip.open(f"{dest_dir}/{gid}.sgf.gz.tmp", "wb") as f:
             f.write(sgfString.encode(ENCODING))
         os.replace(f"{dest_dir}/{gid}.sgf.gz.tmp", f"{dest_dir}/{gid}.sgf.gz")
-        # Clean up
-        if sc is not None:
-            for file in [f"{dest_dir}/{gid}.bin", f"{dest_dir}/{gid}.sgf"]:
-                try:
-                    os.remove(file)
-                except OSError:
-                    pass
+        temp_files.append(f"{dest_dir}/{gid}.sgf")
     else:
         with open(f"{dest_dir}/{gid}.sgf.tmp", "wb") as f:
             f.write(sgfString.encode(ENCODING))
         os.replace(f"{dest_dir}/{gid}.sgf.tmp", f"{dest_dir}/{gid}.sgf")
+
+    # Clean up
+    if sc is not None:
+        for file in temp_files:
+            try:
+                os.remove(file)
+            except OSError:
+                pass
 
 
 def gameover(gid: int, sc: str, err: str) -> None:
