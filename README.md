@@ -4,12 +4,9 @@
 
 Start a cgos server and web page builder.
 
-```shell
-# For Visual Studio Code Terminal on Windows 11
-cd server-python/cgos
-python3 server.py cgos19.ini
-
-python3 webuild.py cgos19.ini
+```sh
+python3 cgos/server.py cgos19.ini &
+python3 cgos/webuild.py cgos19.ini &
 ```
 
 If you used previous version, migrate database.
