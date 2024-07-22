@@ -1,5 +1,26 @@
 # Computer Go Server
 
+|項目|値|
+|---|---|
+|OS|Windows 11|
+|エディター|Visual Studio Code|
+
+## Python がインストールされているか確認する
+
+ここで、Python のコマンドは `python3` ではなく、 `python` とする  
+
+Input:  
+
+```shell
+python -V
+```
+
+Output:
+
+```plaintext
+Python 3.12.3
+```
+
 ## Python Server
 
 Start a cgos server and web page builder.
@@ -7,9 +28,11 @@ Start a cgos server and web page builder.
 ```shell
 # For Visual Studio Code Terminal on Windows 11
 cd server-python/cgos
-python3 server.py cgos19.ini
 
-python3 webuild.py cgos19.ini
+# passlib が入ってない？
+python server.py cgos19.ini
+
+python webuild.py cgos19.ini
 ```
 
 If you used previous version, migrate database.
@@ -28,6 +51,14 @@ See [Wiki](https://github.com/zakki/cgos/wiki/GTP-tournament-game-expansion).
 
 
 ### Administrator extention
+
+とりあえず、Windows で telnet したいときは [PuTTy](https://www.putty.org/) をインストールしておく。  
+
+|項目|値|
+|---|---|
+|ホスト名|localhost|
+|ポート番号|1919|
+|接続タイプ|SSH, Telnet|
 
 ```
 % telnet localhost 1919
