@@ -21,17 +21,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import os
-import sys
 import datetime
+import os
 import re
 import sqlite3
+import sys
 import time
 from typing import Any, Dict, List
 
-from util.timeutils import now_string
-from app.config import Configs
 import jinja2
+from app.config import Configs
+from util.timeutils import now_string
 
 
 def log(msg: str) -> None:
@@ -78,7 +78,7 @@ def crosstable(who: str) -> None:
             (who, view_num),
         ).fetchall()
 
-        for (opp, res, c) in db.execute(
+        for opp, res, c in db.execute(
             "SELECT b, substr(res, 1, 1) as r, count(*) as c FROM games WHERE w=? GROUP BY b, r",
             (who,),
         ):
@@ -95,7 +95,7 @@ def crosstable(who: str) -> None:
             else:
                 draws[opp] += c
 
-        for (opp, res, c) in db.execute(
+        for opp, res, c in db.execute(
             "SELECT w, substr(res, 1, 1) as r, count(*) as c FROM games WHERE b=? GROUP BY w, r",
             (who,),
         ):
@@ -151,9 +151,9 @@ def crosstable(who: str) -> None:
     ]
 
     listgame = []
-    for (gid, opp, r, dte, my_r, my_time, res) in wgms:
+    for gid, opp, r, dte, my_r, my_time, res in wgms:
         listgame.append([int(gid), opp, r, my_r, my_time, *dte.split(" "), res, "W"])
-    for (gid, opp, r, dte, my_r, my_time, res) in bgms:
+    for gid, opp, r, dte, my_r, my_time, res in bgms:
         listgame.append([int(gid), opp, r, my_r, my_time, *dte.split(" "), res, "B"])
 
     listgame.sort(key=lambda e: (-int(e[0]), e[1]))  # [lsort -decreasing $listgame]
@@ -352,7 +352,6 @@ def buildWebPage() -> None:
         "cfg": cfg,
         "right_now": right_now,
         "players": render_players,
-        "rat": rat,
         "gms": games,
         "sch": plaing_games,
     }
@@ -363,7 +362,7 @@ def buildWebPage() -> None:
     with open(tmpfile, "w") as wf:
         wf.write(result)
 
-    os.rename(tmpfile, pageName)
+    os.replace(tmpfile, pageName)
 
     for n in bcr.keys():
         print(f"ready crosstable {n}")
@@ -391,7 +390,7 @@ except sqlite3.Error as e:
 def update_ratings() -> None:
     global rating
 
-    for (nme, rat, k) in db.execute("SELECT name, rating, K FROM password"):
+    for nme, rat, k in db.execute("SELECT name, rating, K FROM password"):
 
         rat = int(rat + 0.5)
 
